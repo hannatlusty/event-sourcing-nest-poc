@@ -1,3 +1,5 @@
+import { Product } from '../product.entity';
+
 export class OrderCreatedEvent {
   constructor(
     readonly orderId: string,
@@ -6,5 +8,6 @@ export class OrderCreatedEvent {
     readonly created: number,
     readonly updated: number,
     readonly issuerId: string,
+    readonly products: Product[],
   ) {}
 }

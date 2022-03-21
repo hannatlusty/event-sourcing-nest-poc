@@ -1,4 +1,5 @@
-import { IsNumber, IsString } from 'class-validator';
+import { IsArray, IsNumber, IsString } from 'class-validator';
+import { Product } from './product.entity';
 
 export class CreateOrderDto {
   @IsNumber()
@@ -9,6 +10,9 @@ export class CreateOrderDto {
 
   @IsString()
   issuerId: string;
+
+  @IsArray()
+  products: Product[];
 }
 
 export interface CloseOrderDto {
@@ -22,7 +26,7 @@ export interface ConfirmOrderDto {
 export enum OrderStatus {
   New = 'New',
   Confirmed = 'Confirmed',
-  Delivered = 'Delivered',
+  Closed = 'Closed',
 }
 
 export enum OrderEventType {

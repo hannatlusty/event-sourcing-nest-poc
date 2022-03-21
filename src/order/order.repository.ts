@@ -7,6 +7,7 @@ import { EventPublisher } from '@nestjs/cqrs';
 import { OrderAggregate } from './order.aggregate';
 import { OrderConfirmedEvent } from './events/order-confirmed.event';
 import { OrderEventType } from './types';
+import { OrderClosedEvent } from './events/order-closed.event';
 
 @Injectable()
 export class OrderRepository {
@@ -36,8 +37,6 @@ export class OrderRepository {
       ),
     );
 
-    console.log(schemas);
-
     await this.orderEventModel.bulkSave(schemas);
 
     aggregate.commit();
@@ -46,6 +45,8 @@ export class OrderRepository {
   private getEventName(
     event: OrderCreatedEvent | OrderConfirmedEvent,
   ): OrderEventType {
+    console.log({ event });
+
     if (event instanceof OrderCreatedEvent) {
       return OrderEventType.CreateOrder;
     }
@@ -71,24 +72,34 @@ export class OrderRepository {
   private static mapEvent(
     orderEvent: OrderEvent,
   ): OrderConfirmedEvent | OrderCreatedEvent {
-    console.log(orderEvent);
-    if (orderEvent.name === OrderEventType.ConfirmOrder) {
-      return new OrderConfirmedEvent(
-        orderEvent.orderId,
-        orderEvent.issuerId,
-        orderEvent.customerId,
-        orderEvent.created,
-        orderEvent.updated,
-      );
+    switch (orderEvent.name) {
+      case OrderEventType.ConfirmOrder:
+        return new OrderConfirmedEvent(
+          orderEvent.orderId,
+          orderEvent.issuerId,
+          orderEvent.customerId,
+          orderEvent.created,
+          orderEvent.updated,
+        );
+      case OrderEventType.CreateOrder:
+        return new OrderCreatedEvent(
+          orderEvent.orderId,
+          orderEvent.customerId,
+          orderEvent.quantity,
+          orderEvent.created,
+          orderEvent.updated,
+          orderEvent.issuerId,
+          (orderEvent as any).products,
+        );
+      case OrderEventType.CloseOrder:
+        return new OrderClosedEvent(
+          orderEvent.orderId,
+          orderEvent.issuerId,
+          orderEvent.customerId,
+          orderEvent.created,
+          orderEvent.updated,
+        );
     }
-    return new OrderCreatedEvent(
-      orderEvent.orderId,
-      orderEvent.customerId,
-      orderEvent.quantity,
-      orderEvent.created,
-      orderEvent.updated,
-      orderEvent.issuerId,
-    );
   }
 
   async findAll(): Promise<any[]> {

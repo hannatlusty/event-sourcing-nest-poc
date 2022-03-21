@@ -4,8 +4,12 @@ import {
   Get,
   Param,
   Post,
+  Res,
   UsePipes,
   ValidationPipe,
+  Response,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { ConfirmOrderDto, CreateOrderDto } from './types';
@@ -28,19 +32,29 @@ export class OrderController {
   async createOrder(@Body() dto: CreateOrderDto) {
     return this.commandBus
       .execute(
-        new CreateOrderCommand(dto.quantity, dto.customerId, dto.issuerId),
+        new CreateOrderCommand(
+          dto.quantity,
+          dto.customerId,
+          dto.issuerId,
+          dto.products,
+        ),
       )
       .then((orderId) => ({ orderId }));
   }
 
   @Post(':id/confirm')
   async confirmOrder(
+    @Res() res: Response,
     @Body() dto: ConfirmOrderDto,
     @Param('id') orderId: string,
   ) {
-    return this.commandBus.execute(
-      new ConfirmOrderCommand(orderId, dto.issuerId),
-    );
+    try {
+      return this.commandBus.execute(
+        new ConfirmOrderCommand(orderId, dto.issuerId),
+      );
+    } catch (error) {
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    }
   }
 
   @Get()

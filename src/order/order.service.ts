@@ -12,23 +12,6 @@ export class OrderService {
     private readonly commandBus: CommandBus,
   ) {}
 
-  // async createOrder(createOrderDto: Types) {
-  //   return this.commandBus.execute(
-  //     new CreateOrderCommand(
-  //       createOrderDto.quantity,
-  //       createOrderDto.customerId,
-  //     ),
-  //   );
-  // }
-  //
-  // async confirmOrder(confirmOrderDto: ConfirmOrderDto): Promise<void> {
-  //   return this.commandBus.execute(new ConfirmOrderCommand(closeOrderDto.id));
-  // }
-
-  // async closeOrder(closeOrderDto: CloseOrderDto): Promise<void> {
-  //   return this.commandBus.execute(new CloseOrderCommand(closeOrderDto.id));
-  // }
-
   async findAll(): Promise<any[]> {
     return this.orderEventModel.find().exec();
   }

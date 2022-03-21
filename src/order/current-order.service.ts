@@ -5,6 +5,7 @@ import { Model } from 'mongoose';
 import { OrderCreatedEvent } from './events/order-created.event';
 import { OrderStatus } from './types';
 import { OrderConfirmedEvent } from './events/order-confirmed.event';
+import { OrderClosedEvent } from './events/order-closed.event';
 
 @Injectable()
 export class CurrentOrderService {
@@ -43,6 +44,22 @@ export class CurrentOrderService {
     order.lastIssuerId = event.issuerId;
     order.updated = event.updated;
     order.status = OrderStatus.Confirmed;
+
+    await order.save();
+  }
+
+  async close(event: OrderClosedEvent): Promise<void> {
+    const order = await this.currentOrderEventModel.findOne({
+      orderId: event.orderId,
+    });
+
+    if (!order) {
+      throw new NotFoundException();
+    }
+
+    order.lastIssuerId = event.issuerId;
+    order.updated = event.updated;
+    order.status = OrderStatus.Closed;
 
     await order.save();
   }
