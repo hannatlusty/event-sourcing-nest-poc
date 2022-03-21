@@ -10,6 +10,7 @@ import {
   Response,
   HttpException,
   HttpStatus,
+  BadRequestException,
 } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { ConfirmOrderDto, CreateOrderDto } from './types';
@@ -49,11 +50,11 @@ export class OrderController {
     @Param('id') orderId: string,
   ) {
     try {
-      return this.commandBus.execute(
+      return await this.commandBus.execute(
         new ConfirmOrderCommand(orderId, dto.issuerId),
       );
     } catch (error) {
-      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+      throw new BadRequestException(error.message);
     }
   }
 

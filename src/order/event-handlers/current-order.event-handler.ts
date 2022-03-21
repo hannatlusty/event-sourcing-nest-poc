@@ -6,7 +6,7 @@ import { OrderClosedEvent } from '../events/order-closed.event';
 
 type OrderEvent = OrderCreatedEvent | OrderConfirmedEvent | OrderClosedEvent;
 
-@EventsHandler(OrderCreatedEvent, OrderConfirmedEvent)
+@EventsHandler(OrderCreatedEvent, OrderConfirmedEvent, OrderClosedEvent)
 export class CurrentOrderEventHandler implements IEventHandler<OrderEvent> {
   constructor(private readonly currentOrderService: CurrentOrderService) {}
 

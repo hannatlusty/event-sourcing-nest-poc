@@ -39,24 +39,14 @@ export class OrderRepository {
 
     await this.orderEventModel.bulkSave(schemas);
 
+    // publish on event bus and remove internal event
     aggregate.commit();
-  }
-
-  private getEventName(
-    event: OrderCreatedEvent | OrderConfirmedEvent,
-  ): OrderEventType {
-    console.log({ event });
-
-    if (event instanceof OrderCreatedEvent) {
-      return OrderEventType.CreateOrder;
-    }
-
-    return OrderEventType.ConfirmOrder;
   }
 
   async create(): Promise<OrderAggregate> {
     const aggregate = new OrderAggregate(Date.now().toString());
 
+    // adds publish and publishAll
     return this.publisher.mergeObjectContext(aggregate);
   }
 
@@ -100,6 +90,16 @@ export class OrderRepository {
           orderEvent.updated,
         );
     }
+  }
+
+  private getEventName(
+    event: OrderCreatedEvent | OrderConfirmedEvent,
+  ): OrderEventType {
+    if (event instanceof OrderCreatedEvent) {
+      return OrderEventType.CreateOrder;
+    }
+
+    return OrderEventType.ConfirmOrder;
   }
 
   async findAll(): Promise<any[]> {

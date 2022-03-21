@@ -31,7 +31,9 @@ export class OrderAggregate extends AggregateRoot {
     products: Product[];
   }) {
     if (!order.products.length) {
-      throw new OrderAggregateAtLeastOneProductInOrder();
+      throw new OrderAggregateAtLeastOneProductInOrder(
+        'OrderAggregateAtLeastOneProductInOrder',
+      );
     }
 
     this.apply(
@@ -50,11 +52,15 @@ export class OrderAggregate extends AggregateRoot {
   confirmOrder({ issuerId }: { issuerId: string }) {
     // Business rule: only customer himself can confirm order
     if (issuerId !== this.customerId) {
-      throw new OrderAggregateOnlyCustomerCanConfirmOrder();
+      throw new OrderAggregateOnlyCustomerCanConfirmOrder(
+        'OrderAggregateOnlyCustomerCanConfirmOrder',
+      );
     }
 
     if (this.status === OrderStatus.Confirmed) {
-      throw new OrderAggregateOnlyNewOrderCanBeConfirmed();
+      throw new OrderAggregateOnlyNewOrderCanBeConfirmed(
+        'OrderAggregateOnlyNewOrderCanBeConfirmed',
+      );
     }
 
     this.apply(
@@ -70,7 +76,9 @@ export class OrderAggregate extends AggregateRoot {
 
   closeOrder({ issuerId }: { issuerId: string }) {
     if (this.status === OrderStatus.Closed) {
-      throw new OrderAggregateCannotCloseClosedOrder();
+      throw new OrderAggregateCannotCloseClosedOrder(
+        'OrderAggregateCannotCloseClosedOrder',
+      );
     }
 
     this.apply(
