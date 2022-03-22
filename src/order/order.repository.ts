@@ -8,7 +8,6 @@ import { OrderAggregate } from './order.aggregate';
 import { OrderConfirmedEvent } from './events/order-confirmed.event';
 import { OrderEventType } from './types';
 import { OrderClosedEvent } from './events/order-closed.event';
-import { OrderClosedEventHandler } from './event-handlers/order-closed.event-handler';
 
 @Injectable()
 export class OrderRepository {
@@ -22,6 +21,7 @@ export class OrderRepository {
     const events = aggregate.getUncommittedEvents() as (
       | OrderCreatedEvent
       | OrderConfirmedEvent
+      | OrderClosedEvent
     )[];
 
     const schemas = await Promise.all(
@@ -100,7 +100,7 @@ export class OrderRepository {
       return OrderEventType.CreateOrder;
     }
 
-    if (event instanceof OrderClosedEventHandler) {
+    if (event instanceof OrderClosedEvent) {
       return OrderEventType.CloseOrder;
     }
 

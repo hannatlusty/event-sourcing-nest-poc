@@ -9,7 +9,7 @@ export class OrderSaga {
   orderCreated = (events$: Observable<any>): Observable<ICommand> => {
     return events$.pipe(
       ofType(OrderCreatedEvent),
-      // map((event) => new DropAncientItemCommand(event.heroId, fakeItemID)),
+      // map((event) => new DoSomethingCommand(event.id)),
     );
   };
 }

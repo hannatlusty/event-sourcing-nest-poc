@@ -18,7 +18,7 @@ export class CurrentOrderEventHandler implements IEventHandler<OrderEvent> {
     } else if (event instanceof OrderClosedEvent) {
       await this.currentOrderService.close(event);
     } else {
-      console.log('should not happen.');
+      console.log('should not happen');
     }
   }
 }
