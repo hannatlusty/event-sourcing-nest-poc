@@ -8,20 +8,28 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { OrderSaga } from './order.saga';
 import { CreateOrderCommandHandler } from './command-handlers/create-order.command-handler';
 import { OrderCreatedEventHandler } from './event-handlers/order-created.event-handler';
-import { GetOrdersQueryHandler } from './queries/get-orders.gery-handler';
+import { GetOrdersQueryHandler } from './queries/get-orders.query-handler';
 import { OrderConfirmedEventHandler } from './event-handlers/order-confirmed.event-handler';
 import { ConfirmOrderCommandHandler } from './command-handlers/confirm-order.command-handler';
 import { CurrentOrderService } from './current-order.service';
 import { CurrentOrder, CurrentOrderSchema } from './current-order.schema';
 import { CurrentOrderEventHandler } from './event-handlers/current-order.event-handler';
+import { GetOrderHistoryQueryHandler } from './queries/get-order-history.query-handler';
+import { CloseOrderCommandHandler } from './command-handlers/close-order.command-handler';
+import { OrderClosedEventHandler } from './event-handlers/order-closed.event-handler';
 
-const CommandHandlers = [CreateOrderCommandHandler, ConfirmOrderCommandHandler];
+const CommandHandlers = [
+  CreateOrderCommandHandler,
+  ConfirmOrderCommandHandler,
+  CloseOrderCommandHandler,
+];
 const EventHandlers = [
   OrderCreatedEventHandler,
   OrderConfirmedEventHandler,
+  OrderClosedEventHandler,
   CurrentOrderEventHandler,
 ];
-const QueryHandlers = [GetOrdersQueryHandler];
+const QueryHandlers = [GetOrdersQueryHandler, GetOrderHistoryQueryHandler];
 
 @Module({
   imports: [

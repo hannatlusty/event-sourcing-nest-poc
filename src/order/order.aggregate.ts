@@ -15,6 +15,7 @@ export class OrderAggregate extends AggregateRoot {
   private quantity: number;
   private status: OrderStatus = OrderStatus.New;
   private products: Product[] = [];
+  private created: number;
 
   get orderId(): string {
     return this.id;
@@ -68,7 +69,7 @@ export class OrderAggregate extends AggregateRoot {
         this.id,
         issuerId,
         this.customerId,
-        Date.now(),
+        this.created,
         Date.now(),
       ),
     );
@@ -86,7 +87,7 @@ export class OrderAggregate extends AggregateRoot {
         this.id,
         issuerId,
         this.customerId,
-        Date.now(),
+        this.created,
         Date.now(),
       ),
     );
@@ -97,6 +98,7 @@ export class OrderAggregate extends AggregateRoot {
     this.quantity = event.quantity;
     this.status = OrderStatus.New;
     this.products = event.products;
+    this.created = event.created;
   }
 
   private onOrderConfirmedEvent(event: OrderConfirmedEvent): void {

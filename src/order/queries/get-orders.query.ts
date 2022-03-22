@@ -1,1 +1,3 @@
-export class GetOrdersQuery {}
+export class GetOrdersQuery {
+  constructor(readonly id?: string) {}
+}

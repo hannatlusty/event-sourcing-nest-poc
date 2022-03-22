@@ -8,6 +8,7 @@ import { OrderAggregate } from './order.aggregate';
 import { OrderConfirmedEvent } from './events/order-confirmed.event';
 import { OrderEventType } from './types';
 import { OrderClosedEvent } from './events/order-closed.event';
+import { OrderClosedEventHandler } from './event-handlers/order-closed.event-handler';
 
 @Injectable()
 export class OrderRepository {
@@ -97,6 +98,10 @@ export class OrderRepository {
   ): OrderEventType {
     if (event instanceof OrderCreatedEvent) {
       return OrderEventType.CreateOrder;
+    }
+
+    if (event instanceof OrderClosedEventHandler) {
+      return OrderEventType.CloseOrder;
     }
 
     return OrderEventType.ConfirmOrder;

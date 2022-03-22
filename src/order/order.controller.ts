@@ -4,12 +4,8 @@ import {
   Get,
   Param,
   Post,
-  Res,
   UsePipes,
   ValidationPipe,
-  Response,
-  HttpException,
-  HttpStatus,
   BadRequestException,
 } from '@nestjs/common';
 import { OrderService } from './order.service';
@@ -19,6 +15,9 @@ import { CreateOrderCommand } from './commands/create-order.command';
 import { OrderAggregate } from './order.aggregate';
 import { GetOrdersQuery } from './queries/get-orders.query';
 import { ConfirmOrderCommand } from './commands/confirm-order.command';
+import { OrderEvent } from './order-event.schema';
+import { GetOrderHistoryQuery } from './queries/get-order-history.query';
+import { CloseOrderCommand } from './commands/close-order.commnand';
 
 @Controller('order')
 export class OrderController {
@@ -42,10 +41,22 @@ export class OrderController {
       )
       .then((orderId) => ({ orderId }));
   }
+  @Post(':id/close')
+  async closeOrder(
+    @Body() dto: { issuerId: string },
+    @Param('id') orderId: string,
+  ) {
+    try {
+      return await this.commandBus.execute(
+        new CloseOrderCommand(orderId, dto.issuerId),
+      );
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
 
   @Post(':id/confirm')
   async confirmOrder(
-    @Res() res: Response,
     @Body() dto: ConfirmOrderDto,
     @Param('id') orderId: string,
   ) {
@@ -56,6 +67,11 @@ export class OrderController {
     } catch (error) {
       throw new BadRequestException(error.message);
     }
+  }
+
+  @Get(':id/history')
+  async getOrderHistory(@Param('id') orderId: string): Promise<OrderEvent[]> {
+    return this.queryBus.execute(new GetOrderHistoryQuery(orderId));
   }
 
   @Get()

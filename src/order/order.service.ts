@@ -12,7 +12,7 @@ export class OrderService {
     private readonly commandBus: CommandBus,
   ) {}
 
-  async findAll(): Promise<any[]> {
-    return this.orderEventModel.find().exec();
+  async findAll(query: Partial<{ orderId: string }>): Promise<OrderEvent[]> {
+    return this.orderEventModel.find({ query }).exec();
   }
 }

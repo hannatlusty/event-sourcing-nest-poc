@@ -1,8 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { CreateOrderCommand } from '../commands/create-order.command';
 import { OrderRepository } from '../order.repository';
 import { CloseOrderCommand } from '../commands/close-order.commnand';
-import { ConfirmOrderCommand } from '../commands/confirm-order.command';
 
 @CommandHandler(CloseOrderCommand)
 export class CloseOrderCommandHandler
